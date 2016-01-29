@@ -44,7 +44,11 @@ include $(CLEAR_VARS)
 LOCAL_SRC_FILES := $(libext2_com_err_src_files)
 LOCAL_C_INCLUDES := $(libext2_com_err_c_includes)
 LOCAL_CFLAGS := $(libext2_com_err_cflags) $(libext2_com_err_cflags_linux)
+ifneq ($(SUPPORT_LENOVO_EXFAT_FS),yes)
 LOCAL_SYSTEM_SHARED_LIBRARIES := libc
+else
+LOCAL_SYSTEM_SHARED_LIBRARIES := $(libext2_com_err_system_shared_libraries)
+endif
 LOCAL_MODULE := libext2_com_err
 LOCAL_MODULE_TAGS := optional
 

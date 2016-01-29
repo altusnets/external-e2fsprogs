@@ -14,6 +14,10 @@ libext2_blkid_src_files := \
 	tag.c \
 	version.c \
 
+ifeq ($(SUPPORT_LENOVO_EXFAT_FS),yes)
+libext2_blkid_src_files += \
+	probe_exfat.c
+endif
 
 libext2_blkid_shared_libraries := libext2_uuid
 
