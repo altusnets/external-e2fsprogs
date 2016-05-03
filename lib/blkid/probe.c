@@ -507,6 +507,15 @@ static unsigned char *search_fat_label(struct vfat_dir_entry *dir, int count)
 	return 0;
 }
 
+int checkasc(const unsigned char* label, int label_len)
+{
+	int i;
+	for (i=0; i<label_len; i++) {
+		if ((unsigned int)label[i] > 127)
+			return 0;
+	}
+	return 1;
+}
 /* FAT label extraction from the root directory taken from Kay
  * Sievers's volume_id library */
 static int probe_fat(struct blkid_probe *probe,
@@ -625,6 +634,11 @@ static int probe_fat(struct blkid_probe *probe,
 	/* We can't just print them as %04X, because they are unaligned */
 	sprintf(serno, "%02X%02X-%02X%02X", vol_serno[3], vol_serno[2],
 		vol_serno[1], vol_serno[0]);
+
+	if (!checkasc(label, label_len)) {
+		printf("blkid: got wrong label=%s, len=%d, clean it\n", label, label_len);
+		label = ""; label_len = 0;
+	}
 
 	blkid_set_tag(probe->dev, "LABEL", (const char *) label, label_len);
 	blkid_set_tag(probe->dev, "UUID", serno, sizeof(serno)-1);
