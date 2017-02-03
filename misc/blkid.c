@@ -34,6 +34,7 @@ extern int optind;
 #define OUTPUT_VALUE_ONLY	0x0001
 #define OUTPUT_DEVICE_ONLY	0x0002
 #define OUTPUT_PRETTY_LIST	0x0004
+#define OUTPUT_UTF8_CODE	0x0008
 
 #include "ext2fs/ext2fs.h"
 #include "blkid/blkid.h"
@@ -266,7 +267,10 @@ static void print_tags(blkid_dev dev, char *show[], int numtag, int output)
 			}
 			fputs(type, stdout);
 			fputs("=\"", stdout);
-			safe_print(value, -1);
+			if (output & OUTPUT_UTF8_CODE)
+				fputs(value, stdout);
+			else
+				safe_print(value, -1);
 			fputs("\" ", stdout);
 		}
 	}
@@ -315,6 +319,8 @@ int main(int argc, char **argv)
 				output_format = OUTPUT_DEVICE_ONLY;
 			else if (!strcmp(optarg, "list"))
 				output_format = OUTPUT_PRETTY_LIST;
+			else if (!strcmp(optarg, "utf8"))
+				output_format = OUTPUT_UTF8_CODE;
 			else if (!strcmp(optarg, "full"))
 				output_format = 0;
 			else {
