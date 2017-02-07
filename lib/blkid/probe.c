@@ -693,6 +693,37 @@ static int probe_fat_nomagic(struct blkid_probe *probe,
 	return probe_fat(probe, id, buf);
 }
 
+static void unicode_16le_to_utf8(unsigned char *str, int out_len,
+				 const unsigned char *buf, int in_len)
+{
+	int i, j;
+	unsigned int c;
+
+	for (i = j = 0; i + 2 <= in_len; i += 2) {
+		c = (buf[i+1] << 8) | buf[i];
+		if (c == 0) {
+			str[j] = '\0';
+			break;
+		} else if (c < 0x80) {
+			if (j+1 >= out_len)
+				break;
+			str[j++] = (unsigned char) c;
+		} else if (c < 0x800) {
+			if (j+2 >= out_len)
+				break;
+			str[j++] = (unsigned char) (0xc0 | (c >> 6));
+			str[j++] = (unsigned char) (0x80 | (c & 0x3f));
+		} else {
+			if (j+3 >= out_len)
+				break;
+			str[j++] = (unsigned char) (0xe0 | (c >> 12));
+			str[j++] = (unsigned char) (0x80 | ((c >> 6) & 0x3f));
+			str[j++] = (unsigned char) (0x80 | (c & 0x3f));
+		}
+	}
+	str[j] = '\0';
+}
+
 static int probe_ntfs(struct blkid_probe *probe,
 		      struct blkid_magic *id __BLKID_ATTR((unused)),
 		      unsigned char *buf)
@@ -786,17 +817,22 @@ static int probe_ntfs(struct blkid_probe *probe,
 			for (i=0, cp=label_str; i < val_len; i+=2,cp++) {
 				val = ((__u8 *) attr) + val_off + i;
 				*cp = val[0];
-				if (val[1])
-					*cp = '?';
+				++cp;
+				*cp = val[1];
 			}
 			*cp = 0;
+
+			if (label_str[0]){
+				char utf8_label[128];
+				unicode_16le_to_utf8(utf8_label, sizeof(utf8_label),label_str, val_len);
+				blkid_set_tag(probe->dev, "LABEL", utf8_label, 0);
+			}
 		}
 	}
 
 	sprintf(uuid_str, "%016llX", blkid_le64(ns->volume_serial));
 	blkid_set_tag(probe->dev, "UUID", uuid_str, 0);
-	if (label_str[0])
-		blkid_set_tag(probe->dev, "LABEL", label_str, 0);
+
 	return 0;
 }
 
