@@ -1537,11 +1537,11 @@ static int probe_exfat(struct blkid_probe *probe, struct blkid_magic *id,
         blkid_set_tag(probe->dev, "LABEL", utf8_label, 0);
     }
 
+    memset(uuid, 0, sizeof (uuid));
     snprintf(uuid, sizeof (uuid), "%02hhX%02hhX-%02hhX%02hhX",
              sb->volume_serial[3], sb->volume_serial[2],
              sb->volume_serial[1], sb->volume_serial[0]);
-
-    set_uuid(probe->dev, uuid, 0);
+    blkid_set_tag(probe->dev, "UUID", uuid, strlen(uuid));
 
     return 0;
 }
