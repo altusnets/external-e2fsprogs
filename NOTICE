@@ -852,3 +852,208 @@ necessary.  Here is a sample; alter the names:
 *
 * This file may be redistributed under the terms of the
 * GNU Lesser General Public License.That's all there is to it!
+
+===============================================================================
+
+/*
+ * Dictionary Abstract Data Type
+ * Copyright (C) 1997 Kaz Kylheku <kaz@ashi.footprints.net>
+ *
+ * Free Software License:
+ *
+ * All rights are reserved by the author, with the following exceptions:
+ * Permission is granted to freely reproduce and distribute this software,
+ * possibly in exchange for a fee, provided that this copyright notice appears
+ * intact. Permission is also granted to adapt this software to produce
+ * derivative works, as long as the modified versions carry this copyright
+ * notice and additional notices stating that the work has been modified.
+ * This source code may be translated into executable form and incorporated
+ * into proprietary software; there is no requirement for such software to
+ * contain a copyright notice related to this source.
+ *
+ * $Id: dict.c,v 1.40.2.7 2000/11/13 01:36:44 kaz Exp $
+ * $Name: kazlib_1_20 $
+ */
+
+================================================================================
+
+/*
+ * profile.c -- A simple configuration file parsing "library in a file"
+ *
+ * The profile library was originally written by Theodore Ts'o in 1995
+ * for use in the MIT Kerberos v5 library.  It has been
+ * modified/enhanced/bug-fixed over time by other members of the MIT
+ * Kerberos team.  This version was originally taken from the Kerberos
+ * v5 distribution, version 1.4.2, and radically simplified for use in
+ * e2fsprogs.  (Support for locking for multi-threaded operations,
+ * being able to modify and update the configuration file
+ * programmatically, and Mac/Windows portability have been removed.
+ * It has been folded into a single C source file to make it easier to
+ * fold into an application program.)
+ *
+ * Copyright (C) 2005, 2006 by Theodore Ts'o.
+ *
+ * %Begin-Header%
+ * This file may be redistributed under the terms of the GNU Public
+ * License.
+ * %End-Header%
+ *
+ * Copyright (C) 1985-2005 by the Massachusetts Institute of Technology.
+ *
+ * All rights reserved.
+ *
+ * Export of this software from the United States of America may require
+ * a specific license from the United States Government.  It is the
+ * responsibility of any person or organization contemplating export to
+ * obtain such a license before exporting.
+ *
+ * WITHIN THAT CONSTRAINT, permission to use, copy, modify, and
+ * distribute this software and its documentation for any purpose and
+ * without fee is hereby granted, provided that the above copyright
+ * notice appear in all copies and that both that copyright notice and
+ * this permission notice appear in supporting documentation, and that
+ * the name of M.I.T. not be used in advertising or publicity pertaining
+ * to distribution of the software without specific, written prior
+ * permission.  Furthermore if you modify this software you must label
+ * your software as modified software and not distribute it in such a
+ * fashion that it might be confused with the original MIT software.
+ * M.I.T. makes no representations about the suitability of this software
+ * for any purpose.  It is provided "as is" without express or implied
+ * warranty.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ */
+
+===============================================================================
+
+/*
+ * crc32.c --- CRC32 function
+ *
+ * Copyright (C) 2008 Theodore Ts'o.
+ *
+ * %Begin-Header%
+ * This file may be redistributed under the terms of the GNU Public
+ * License.
+ * %End-Header%
+ */
+
+/*
+ * Oct 15, 2000 Matt Domsch <Matt_Domsch@dell.com>
+ * Nicer crc32 functions/docs submitted by linux@horizon.com.  Thanks!
+ * Code was from the public domain, copyright abandoned.  Code was
+ * subsequently included in the kernel, thus was re-licensed under the
+ * GNU GPL v2.
+ *
+ * Oct 12, 2000 Matt Domsch <Matt_Domsch@dell.com>
+ * Same crc32 function was used in 5 other places in the kernel.
+ * I made one version, and deleted the others.
+ * There are various incantations of crc32().  Some use a seed of 0 or ~0.
+ * Some xor at the end with ~0.  The generic crc32() function takes
+ * seed as an argument, and doesn't xor at the end.  Then individual
+ * users can do whatever they need.
+ *   drivers/net/smc9194.c uses seed ~0, doesn't xor with ~0.
+ *   fs/jffs2 uses seed 0, doesn't xor with ~0.
+ *   fs/partitions/efi.c uses seed ~0, xor's with ~0.
+ *
+ * This source code is licensed under the GNU General Public License,
+ * Version 2.  See the file COPYING for more details.
+ */
+
+==============================================================================
+
+/*
+ * clear.c -- Clear a UUID
+ *
+ * Copyright (C) 1996, 1997 Theodore Ts'o.
+ *
+ * %Begin-Header%
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, and the entire permission notice in its entirety,
+ *    including the disclaimer of warranties.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 3. The name of the author may not be used to endorse or promote
+ *    products derived from this software without specific prior
+ *    written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE, ALL OF
+ * WHICH ARE HEREBY DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+ * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+ * BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+ * USE OF THIS SOFTWARE, EVEN IF NOT ADVISED OF THE POSSIBILITY OF SUCH
+ * DAMAGE.
+ * %End-Header%
+ */
+
+==============================================================================
+
+/*
+ * Copyright 1987, 1988 by MIT Student Information Processing Board.
+ *
+ * Permission to use, copy, modify, and distribute this software and
+ * its documentation for any purpose is hereby granted, provided that
+ * the names of M.I.T. and the M.I.T. S.I.P.B. not be used in
+ * advertising or publicity pertaining to distribution of the software
+ * without specific, written prior permission.  M.I.T. and the
+ * M.I.T. S.I.P.B. make no representations about the suitability of
+ * this software for any purpose.  It is provided "as is" without
+ * express or implied warranty.
+ */
+
+==============================================================================
+
+/*
+ * com_right.c -- provide Heimdall / Kerberos4kth com_err interfaces
+ *      for backwards compatbility
+ *
+ * Copyright (c) 2003 by Theodore Ts'o
+ *
+ * Taken from lib/com_err/error.c from Kerberos4kth distribution.
+ *
+ * Copyright (c) 1997, 1998, 2001 Kungliga Tekniska H<F6>gskolan
+ * (Royal Institute of Technology, Stockholm, Sweden).
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * 3. Neither the name of the Institute nor the names of its contributors
+ *    may be used to endorse or promote products derived from this software
+ *    without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE INSTITUTE AND CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE INSTITUTE OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ */
+
+=============================================================================
+
