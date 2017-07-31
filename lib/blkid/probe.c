@@ -1495,7 +1495,10 @@ static int probe_exfat(struct blkid_probe *probe, struct blkid_magic *id,
 
     label = find_exfat_entry_label(probe, sb);
     if (label) {
-        blkid_set_tag(probe->dev, "LABEL", label->name, label->length);
+        char utf8_label[128];
+        unicode_16le_to_utf8(utf8_label, sizeof(utf8_label), label->name,
+            label->length*2);
+        blkid_set_tag(probe->dev, "LABEL", utf8_label, 0);
     } else {
         blkid_set_tag(probe->dev, "LABEL", "disk", 4);
     }
