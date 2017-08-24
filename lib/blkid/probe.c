@@ -1535,8 +1535,6 @@ static int probe_exfat(struct blkid_probe *probe, struct blkid_magic *id,
         unicode_16le_to_utf8(utf8_label, sizeof(utf8_label), label->name,
             label->length*2);
         blkid_set_tag(probe->dev, "LABEL", utf8_label, 0);
-    } else {
-        blkid_set_tag(probe->dev, "LABEL", "disk", 4);
     }
 
     snprintf(uuid, sizeof (uuid), "%02hhX%02hhX-%02hhX%02hhX",
