@@ -37,6 +37,10 @@
 #include "uuid/uuid.h"
 #include "probe.h"
 
+extern int probe_exfat(struct blkid_probe *probe,
+		      struct blkid_magic *id __BLKID_ATTR((unused)),
+		      unsigned char *buf);
+
 static int figure_label_len(const unsigned char *label, int len)
 {
 	const unsigned char *end = label + len - 1;
@@ -86,6 +90,11 @@ static unsigned char *get_buffer(struct blkid_probe *pr,
 	}
 }
 
+unsigned char *blkid_probe_get_buffer(struct blkid_probe *pr,
+			  blkid_loff_t off, size_t len)
+{
+	return get_buffer(pr, off, len);
+}
 
 /*
  * This is a special case code to check for an MDRAID device.  We do
@@ -1402,99 +1411,6 @@ static int probe_f2fs(struct blkid_probe *probe,
     return 0;
 }
 
-static uint64_t exfat_block_to_offset(const struct exfat_super_block *sb,
-                                      uint64_t block)
-{
-    return block << sb->block_bits;
-}
-
-static uint64_t exfat_cluster_to_block(const struct exfat_super_block *sb,
-                                       uint32_t cluster)
-{
-    return sb->cluster_block_start +
-            ((uint64_t)(cluster - EXFAT_FIRST_DATA_CLUSTER) << sb->bpc_bits);
-}
-
-static uint64_t exfat_cluster_to_offset(const struct exfat_super_block *sb,
-                                        uint32_t cluster)
-{
-    return exfat_block_to_offset(sb, exfat_cluster_to_block(sb, cluster));
-}
-
-static uint32_t exfat_next_cluster(struct blkid_probe *probe,
-                                   const struct exfat_super_block *sb,
-                                   uint32_t cluster)
-{
-    uint32_t *next;
-    uint64_t offset;
-
-    offset = exfat_block_to_offset(sb, sb->fat_block_start)
-            + (uint64_t) cluster * sizeof (cluster);
-    next = (uint32_t *)get_buffer(probe, offset, sizeof (uint32_t));
-
-    return next ? *next : 0;
-}
-
-static struct exfat_entry_label *find_exfat_entry_label(
-    struct blkid_probe *probe, const struct exfat_super_block *sb)
-{
-    uint32_t cluster = sb->rootdir_cluster;
-    uint64_t offset = exfat_cluster_to_offset(sb, cluster);
-    uint8_t *entry;
-    const size_t max_iter = 10000;
-    size_t i = 0;
-
-    for (; i < max_iter; ++i) {
-        entry = (uint8_t *)get_buffer(probe, offset, EXFAT_ENTRY_SIZE);
-        if (!entry)
-            return NULL;
-        if (entry[0] == EXFAT_ENTRY_EOD)
-            return NULL;
-        if (entry[0] == EXFAT_ENTRY_LABEL)
-            return (struct exfat_entry_label*) entry;
-
-        offset += EXFAT_ENTRY_SIZE;
-        if (offset % CLUSTER_SIZE(sb) == 0) {
-            cluster = exfat_next_cluster(probe, sb, cluster);
-            if (cluster < EXFAT_FIRST_DATA_CLUSTER)
-                return NULL;
-            if (cluster > EXFAT_LAST_DATA_CLUSTER)
-                return NULL;
-            offset = exfat_cluster_to_offset(sb, cluster);
-        }
-    }
-
-    return NULL;
-}
-
-static int probe_exfat(struct blkid_probe *probe, struct blkid_magic *id,
-                       unsigned char *buf)
-{
-    struct exfat_super_block *sb;
-    struct exfat_entry_label *label;
-    uuid_t uuid;
-    sb = (struct exfat_super_block *)buf;
-    if (!sb || !CLUSTER_SIZE(sb)) {
-        DBG(DEBUG_PROBE, printf("bad exfat superblock.\n"));
-        return errno ? - errno : 1;
-    }
-
-    label = find_exfat_entry_label(probe, sb);
-    if (label) {
-        blkid_set_tag(probe->dev, "LABEL", label->name, label->length);
-    } else {
-        blkid_set_tag(probe->dev, "LABEL", "disk", 4);
-    }
-
-    snprintf(uuid, sizeof (uuid), "%02hhX%02hhX-%02hhX%02hhX",
-             sb->volume_serial[3], sb->volume_serial[2],
-             sb->volume_serial[1], sb->volume_serial[0]);
-
-    set_uuid(probe->dev, uuid, 0);
-
-    return 0;
-}
-
 /*
  * Various filesystem magics that we can check for.  Note that kboff and
  * sboff are in kilobytes and bytes respectively.  All magics are in
@@ -1504,6 +1420,7 @@ static struct blkid_magic type_array[] = {
 /*  type     kboff   sboff len  magic			probe */
   { "oracleasm", 0,	32,  8, "ORCLDISK",		probe_oracleasm },
   { "ntfs",	 0,	 3,  8, "NTFS    ",		probe_ntfs },
+  { "exfat",	 0,	 3,  8, "EXFAT   ",		probe_exfat },
   { "jbd",	 1,   0x38,  2, "\123\357",		probe_jbd },
   { "ext4dev",	 1,   0x38,  2, "\123\357",		probe_ext4dev },
   { "ext4",	 1,   0x38,  2, "\123\357",		probe_ext4 },
@@ -1604,7 +1521,6 @@ static struct blkid_magic type_array[] = {
   { "lvm2pv",	 1,  0x218,  8, "LVM2 001",		probe_lvm2 },
   { "btrfs",	 64,  0x40,  8, "_BHRfS_M",		probe_btrfs },
   { "f2fs",	 1,      0,  4, "\x10\x20\xf5\xf2",	probe_f2fs },
-  { "exfat",     0,      3,  8, "EXFAT   ",             probe_exfat },
   {   NULL,	 0,	 0,  0, NULL,			NULL }
 };
 
